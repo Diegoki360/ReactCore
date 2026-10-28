@@ -9,8 +9,8 @@ function ArmaCard({ arma }) {
 
             <h2>{arma.name}</h2>
 
-            <p>Ataque: {arma.properties.attack ?? "???"}</p>
-            <p>Defensa: {arma.properties.defense ?? "???"}</p>
+            <p>Ataque: {arma.properties?.attack ?? "???"}</p>
+            <p>Defensa: {arma.properties?.defense ?? "???"}</p>
             <p>tipo: {obtenerTipo(arma)}</p>
 
             <details className="arma-detalles">

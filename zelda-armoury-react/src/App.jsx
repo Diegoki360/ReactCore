@@ -9,7 +9,8 @@ import {
     obtenerZonas,
     filtrarPorZona,
     filtrarPorTipo,
-    filtrarPorNombre
+    filtrarPorNombre,
+    contarPorTipo
 } from "./logic.js";
 
 function App() {
@@ -57,6 +58,10 @@ function App() {
         busqueda
     );
 
+    const totalArmas = armasFiltradas.length;
+
+    const resumenTipos = contarPorTipo(armasFiltradas);
+
     return (
         <main>
             <h1>Zelda Armory</h1>
@@ -77,7 +82,19 @@ function App() {
             ) : error ? (
                 <p>Error al cargar las armas: {error}</p>
             ) : (
-                <ListaArmas armas={armasFiltradas} />
+                <>
+                    <section className="resumen-armas">
+                        <p>
+                            Equipamiento encontrado: {totalArmas}
+                        </p>
+                    </section>
+
+                    {totalArmas > 0 ? (
+                        <ListaArmas armas={armasFiltradas} />
+                    ) : (
+                        <p>No se ha encontrado equipamiento.</p>
+                    )}
+                </>
             )}
         </main>
     );

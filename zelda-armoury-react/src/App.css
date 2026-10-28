@@ -320,3 +320,94 @@ h1 {
 .resumen-armas p {
     line-height: 1.6;
 }
+
+.boton-favorito {
+    display: block;
+    margin: 12px auto;
+    padding: 8px 14px;
+
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #26d9ee;
+    border-radius: 8px;
+
+    font-size: 22px;
+    cursor: pointer;
+
+    transition: transform 0.2s, background 0.2s;
+}
+
+.boton-favorito:hover {
+    transform: scale(1.12);
+    background: rgba(38, 217, 238, 0.15);
+}
+
+.boton-favorito.activo {
+    border-color: #ff6b8a;
+}
+
+
+/* BOTÓN DE FILTRO DE FAVORITOS */
+
+.filtro-favoritos {
+    display: block;
+    margin: 20px auto 30px;
+    padding: 12px 24px;
+
+    background-color: #071e2b;
+    color: #70f2ff;
+
+    border: 2px solid #26d9ee;
+    border-radius: 8px;
+
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.filtro-favoritos:hover {
+    background-color: #126577;
+    box-shadow: 0 0 12px #26d9ee66;
+    transform: scale(1.03);
+}
+
+.filtro-favoritos:active {
+    transform: scale(0.97);
+}
+
+
+/* CORAZONES DE LAS TARJETAS */
+
+.boton-favorito {
+    padding: 8px 12px;
+
+    background-color: #071e2b;
+    border: 1px solid #26d9ee;
+    border-radius: 8px;
+
+    font-size: 22px;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.boton-favorito:hover {
+    transform: scale(1.1);
+    background-color: #126577;
+}
+
+.boton-favorito.activo {
+    border-color: #ff5b73;
+    background-color: #401b2a;
+    box-shadow: 0 0 10px #ff5b7344;
+}
+
+/* ACCESIBILIDAD CON TECLADO */
+
+.filtro-favoritos:focus-visible,
+.boton-favorito:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+

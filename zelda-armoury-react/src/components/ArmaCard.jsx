@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { obtenerTipo } from "../logic.js";
 
-function ArmaCard({ arma }) {
+function ArmaCard({ arma, esFavorito, alternarFavorito }) {
     const [mostrarDetalles, setMostrarDetalles] = useState(false);
     return (
         <article className="arma-card">
             <img src={arma.image} alt={arma.name} />
 
             <h2>{arma.name}</h2>
+
+            <button
+                type="button"
+                className={`boton-favorito ${esFavorito ? "activo" : ""}`}
+                onClick={() => alternarFavorito(arma.id)}
+                aria-label={esFavorito ? "Quitar de favoritos" : "Añadir a favoritos"}
+            >
+                {esFavorito ? "❤️" : "🤍"}
+            </button>
 
             <p>Ataque: {arma.properties?.attack ?? "???"}</p>
             <p>Defensa: {arma.properties?.defense ?? "???"}</p>

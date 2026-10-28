@@ -1,7 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { obtenerArmas } from "./api";
 import ListaArmas from "./components/ListaArmas";
 import Filtros from "./components/Filtros";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 import "./App.css";
 
 import {
@@ -14,6 +16,9 @@ import {
 } from "./logic.js";
 
 function App() {
+
+    // ESTADOS
+
     const [armas, setArmas] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
@@ -22,45 +27,88 @@ function App() {
     const [tipo, setTipo] = useState("");
     const [zona, setZona] = useState("");
 
-    useEffect(() => {
-        async function cargarArmas() {
-            
-            try {
+    const [soloFavoritos, setSoloFavoritos] = useState(false);
 
+    const [favoritos, setFavoritos] = useLocalStorage("favoritos", []);
+
+
+    // AÑADIR O QUITAR FAVORITOS
+
+    function alternarFavorito(id) {
+        setFavoritos(anteriores =>
+            anteriores.includes(id)
+                ? anteriores.filter(favorito => favorito !== id)
+                : [...anteriores, id]
+        );
+    }
+
+
+    // CARGA DE DATOS DESDE LA API
+
+    useEffect(() => {
+        let activo = true;
+
+        async function cargarArmas() {
+            try {
                 const datos = await obtenerArmas();
+
+                
                 setArmas(datos);
+                
 
             } catch (err) {
-
+                
                 setError(err.message);
+                
 
             } finally {
-
+                
                 setCargando(false);
-
+                
             }
         }
 
         cargarArmas();
 
-        return;
+        return () => {
+            activo = false;
+        };
     }, []);
+
+
+    // OPCIONES DE LOS FILTROS
 
     const tipos = [...new Set(armas.map(obtenerTipo))].sort();
 
     const zonas = obtenerZonas(armas);
 
+
+    // FILTRADO DE ARMAS
+
     const armasFiltradas = filtrarPorNombre(
-    filtrarPorTipo(
+        filtrarPorTipo(
             filtrarPorZona(armas, zona),
             tipo
         ),
         busqueda
     );
 
-    const totalArmas = armasFiltradas.length;
 
-    const resumenTipos = contarPorTipo(armasFiltradas);
+    // FILTRO DE FAVORITOS
+
+    const armasVisibles = soloFavoritos
+        ? armasFiltradas.filter(arma => favoritos.includes(arma.id))
+        : armasFiltradas;
+
+
+    // ESTADÍSTICAS
+
+    const totalArmas = armasVisibles.length;
+
+    const resumenTipos = contarPorTipo(armasVisibles);
+
+
+    // INTERFAZ
 
     return (
         <main>
@@ -87,10 +135,32 @@ function App() {
                         <p>
                             Equipamiento encontrado: {totalArmas}
                         </p>
+
+                        <p>
+                            {Object.entries(resumenTipos)
+                                .map(([tipo, cantidad]) =>
+                                    `${tipo}: ${cantidad}`
+                                )
+                                .join(" | ")}
+                        </p>
                     </section>
 
+                    <button
+                        type="button"
+                        className="filtro-favoritos"
+                        onClick={() => setSoloFavoritos(!soloFavoritos)}
+                    >
+                        {soloFavoritos
+                            ? "Mostrar todas"
+                            : "❤️ Solo favoritos"}
+                    </button>
+
                     {totalArmas > 0 ? (
-                        <ListaArmas armas={armasFiltradas} />
+                        <ListaArmas
+                            armas={armasVisibles}
+                            favoritos={favoritos}
+                            alternarFavorito={alternarFavorito}
+                        />
                     ) : (
                         <p>No se ha encontrado equipamiento.</p>
                     )}

@@ -1,242 +1,66 @@
-# \# Zelda Armory — M3: Reactor Core
+## Verificación
 
-# 
+Para verificar el correcto funcionamiento de Zelda Armory React, he realizado diferentes pruebas directamente en el navegador:
 
-# Aplicación web desarrollada con React y Vite que permite consultar el equipamiento de \*The Legend of Zelda: Breath of the Wild\* utilizando la API de Hyrule Compendium.
+- Carga del equipamiento desde la API de Hyrule Compendium.
+- Filtrado de armas por zona, tipo y nombre.
+- Combinación simultánea de varios filtros.
+- Actualización del contador de resultados y del resumen de equipamiento por tipo.
+- Búsquedas sin resultados.
+- Funcionamiento de los componentes de React y actualización de la interfaz al modificar los estados.
+- Marcado y desmarcado de armas favoritas mediante el botón de corazón.
+- Filtrado del equipamiento para mostrar únicamente las armas favoritas.
+- Persistencia de los favoritos mediante `localStorage`, incluso después de recargar la página.
+- Funcionamiento de la caché de `localStorage` para evitar peticiones repetidas a la API durante una hora.
+- Gestión de errores de conexión y visualización de los mensajes correspondientes.
 
-# 
+Las funcionalidades anteriores se han revisado durante el desarrollo de la aplicación. Zelda Armory React permite consultar y filtrar el equipamiento, gestionar una colección de favoritos y actualizar la interfaz de forma dinámica mediante los estados de React.
 
-# Este proyecto es una adaptación de Zelda Armory, desarrollado anteriormente en la Misión 2 con JavaScript Vanilla, a una arquitectura basada en componentes de React.
+## Uso de IA
 
-# 
+Durante el desarrollo he utilizado ChatGPT como herramienta de apoyo para resolver dudas sobre React, HTML, CSS y JavaScript, especialmente para comprender conceptos como `useState`, `useEffect`, las propiedades de los componentes (`props`), los hooks personalizados y la actualización de la interfaz mediante cambios de estado.
 
-# La aplicación permite visualizar armas, consultar sus estadísticas y descripciones, y filtrar el equipamiento por nombre, tipo y localización.
+También he utilizado la IA para detectar errores, estudiar alternativas para organizar los componentes, adaptar la lógica de filtrado de la aplicación anterior a React e implementar un sistema de favoritos persistente mediante un hook personalizado `useLocalStorage`. Asimismo, he utilizado ChatGPT como apoyo para la redacción y organización del README y para mejorar los estilos CSS.
 
-# 
+Las soluciones propuestas se han ido incorporando progresivamente, revisando su funcionamiento y comprendiendo el código antes de integrarlo en el proyecto.
 
-# \## Funcionamiento
+La elección de la temática, la estructura general de la aplicación, la organización de sus funcionalidades, el diseño visual inspirado en la tableta Sheikah y la integración final de los diferentes componentes se han realizado con mi participación directa, utilizando la IA como herramienta de aprendizaje, implementación y revisión.
 
-# 
+Para verificar las soluciones sugeridas, he probado las diferentes funcionalidades en el navegador, comprobando la carga de datos, los filtros, los contadores, la actualización de los componentes y la persistencia de los favoritos al recargar la página.
 
-# La aplicación obtiene el equipamiento desde la API de Hyrule Compendium y lo muestra mediante tarjetas individuales.
+Dos prompts relevantes utilizados durante el desarrollo fueron:
 
-# 
+"¿Por qué debo colocar el botón de favoritos en App.jsx y no en ListaArmas.jsx?"
 
-# Cada tarjeta presenta el nombre, la imagen y las estadísticas disponibles del arma. Además, incluye un desplegable HTML que permite consultar su descripción y sus localizaciones.
+"¿Cómo puedo guardar los favoritos en localStorage utilizando un hook personalizado?"
 
-# 
+Las respuestas se utilizaron para comprender la distribución de responsabilidades entre componentes de React y la comunicación mediante props. También me permitieron aprender a crear un hook personalizado que combina useState y useEffect para almacenar los favoritos en localStorage y conservarlos después de recargar la página.
 
-# El usuario puede buscar equipamiento por nombre y aplicar filtros de tipo y zona simultáneamente.
+Estos conocimientos se aplicaron a la implementación del sistema de favoritos, separando la lógica de filtrado de la representación de las tarjetas y evitando almacenar estados innecesarios..
 
-# 
+## Autopsia
 
-# La interfaz se actualiza automáticamente cuando cambian los filtros, sin necesidad de volver a solicitar los datos a la API.
+### 1. Utilización de un elemento HTML para mostrar los detalles de las armas
 
-# 
+Una decisión que he tomado durante el desarrollo ha sido utilizar el elemento HTML <details> para mostrar y ocultar la información adicional de cada arma, como su descripción y las localizaciones en las que puede encontrarse.
 
-# \## Arquitectura
+Esta solución permite que el usuario consulte la información de cada objeto sin necesidad de crear un estado adicional en React. El propio navegador se encarga de gestionar la apertura y el cierre de los detalles.
 
-# 
+La alternativa sería utilizar useState para almacenar si los detalles de cada tarjeta están abiertos o cerrados, modificando su visualización mediante renderizado condicional.
 
-# El proyecto está organizado en diferentes archivos y componentes:
+He elegido utilizar <details> porque permite conseguir el mismo resultado con menos código y evita introducir estados innecesarios en la aplicación.
 
-# 
+El principal inconveniente de esta decisión es que ofrece menos control sobre el comportamiento y las animaciones de los detalles que una implementación personalizada mediante React.
 
-# \- \*\*App.jsx:\*\* componente principal encargado de gestionar los estados, cargar los datos y coordinar los filtros.
+### 2. Clasificación automática del equipamiento según su nombre
 
-# \- \*\*Filtros.jsx:\*\* componente que contiene los controles de búsqueda y selección.
+Una decisión discutible ha sido mantener el sistema de clasificación de armas de la aplicación anterior, utilizando palabras clave presentes en el nombre de cada objeto para determinar su categoría.
 
-# \- \*\*ListaArmas.jsx:\*\* componente encargado de recorrer el equipamiento y generar las tarjetas.
+Para ello, se utiliza una función que identifica términos como shield, bow, spear o sword, asignando a cada arma un tipo determinado que posteriormente puede utilizarse en los filtros y en el resumen estadístico.
 
-# \- \*\*ArmaCard.jsx:\*\* componente reutilizable que muestra la información de cada arma.
+La alternativa sería crear una clasificación manual para cada objeto o utilizar directamente una propiedad de clasificación proporcionada por la API, si estuviera disponible y fuera suficientemente específica.
 
-# \- \*\*api.js:\*\* módulo encargado de obtener los datos de la API.
+He elegido mantener este sistema porque permite clasificar automáticamente el equipamiento recibido sin necesidad de modificar individualmente cada objeto. Además, al mantener esta lógica en logic.js, puede reutilizarse independientemente de los componentes de React.
 
-# \- \*\*logic.js:\*\* módulo que contiene las funciones de clasificación y filtrado del equipamiento.
-
-# \- \*\*App.css e index.css:\*\* archivos que definen el diseño visual y los estilos generales.
-
-# 
-
-# Se utiliza `useState` para almacenar el equipamiento, controlar la carga y los errores, y gestionar los filtros seleccionados.
-
-# 
-
-# Se utiliza `useEffect` para realizar la carga inicial de datos.
-
-# 
-
-# Las armas filtradas se calculan directamente a partir de los estados existentes, evitando almacenar información duplicada.
-
-# 
-
-# \## Uso de IA
-
-# 
-
-# Durante el desarrollo de esta práctica he utilizado \*\*ChatGPT como herramienta de apoyo para el aprendizaje, la implementación y la depuración de React\*\*.
-
-# 
-
-# Su utilización ha estado centrada principalmente en comprender el funcionamiento de los componentes, las propiedades (`props`), los estados (`useState`) y los efectos (`useEffect`), así como las diferencias entre la programación con JavaScript Vanilla y React.
-
-# 
-
-# También he utilizado la IA para obtener ejemplos de implementación de componentes, resolver errores relacionados con la comunicación entre componentes y adaptar el diseño visual de la aplicación mediante CSS.
-
-# 
-
-# En concreto, ChatGPT ha participado en la propuesta inicial de la estructura de componentes, la implementación de las tarjetas de equipamiento, la creación de los controles de filtrado y la corrección de problemas visuales de la cuadrícula.
-
-# 
-
-# Asimismo, he utilizado ChatGPT como apoyo para la redacción y organización de este README.
-
-# 
-
-# \### Prompts relevantes
-
-# 
-
-# Dos consultas realizadas durante el desarrollo fueron:
-
-# 
-
-# \*\*1.\*\* "useEffect se ejecuta nada más cargar el componente App, entonces ¿por qué llamamos a la función después de escribirla en lugar de hacerlo directamente?"
-
-# 
-
-# Esta consulta me permitió comprender por qué se utiliza una función asíncrona dentro de `useEffect`, en lugar de declarar directamente una función asíncrona como callback del efecto.
-
-# 
-
-# \*\*2.\*\* "Pero ¿se actualiza todo App? O sea, ¿se vuelve a llamar la API y todo useEffect?"
-
-# 
-
-# Esta pregunta me ayudó a comprender la diferencia entre el renderizado de un componente y la ejecución de sus efectos, así como el funcionamiento del array de dependencias.
-
-# 
-
-# \### Verificación de las respuestas
-
-# 
-
-# Las soluciones propuestas por ChatGPT se han incorporado progresivamente, probando su funcionamiento directamente en el navegador y revisando los errores que aparecían durante el desarrollo.
-
-# 
-
-# Por ejemplo, durante la implementación de los filtros se detectó un error provocado por intentar utilizar `.map()` sobre una propiedad que todavía no se había pasado al componente. Para solucionarlo, revisé la comunicación mediante `props` entre `App.jsx` y `Filtros.jsx`.
-
-# 
-
-# También se realizaron modificaciones en el CSS para corregir problemas de desbordamiento y solapamiento de las tarjetas.
-
-# 
-
-# Las explicaciones de la IA se utilizaron para comprender el funcionamiento del código, realizando preguntas adicionales cuando alguna parte no quedaba clara.
-
-# 
-
-# \### Trabajo manual
-
-# 
-
-# La elección de mantener la temática de Zelda Armory y adaptar el proyecto anterior a React fue una decisión propia.
-
-# 
-
-# También he reutilizado las funciones de clasificación y filtrado desarrolladas en la Misión 2, integrándolas en la nueva arquitectura.
-
-# 
-
-# He participado directamente en la organización de los componentes, la conexión entre estados y propiedades, la revisión de los resultados y las pruebas realizadas en el navegador.
-
-# 
-
-# La IA se ha utilizado como herramienta de consulta, generación de propuestas y resolución de problemas, no como sustituto de la revisión y comprensión del código implementado.
-
-# 
-
-# \## Autopsia
-
-# 
-
-# \### 1. Gestión de los filtros mediante estados en App.jsx
-
-# 
-
-# Una de las decisiones de diseño ha sido almacenar los estados de búsqueda, tipo y localización en el componente principal `App.jsx`, en lugar de mantenerlos individualmente dentro de `Filtros.jsx`.
-
-# 
-
-# Esta decisión permite que el componente `Filtros` reciba los valores y las funciones actualizadoras mediante `props`, mientras que `App` utiliza esos valores para determinar qué armas deben mostrarse.
-
-# 
-
-# La alternativa habría sido almacenar los estados dentro del propio componente `Filtros`, pero eso habría requerido comunicar los cambios al componente principal mediante funciones adicionales.
-
-# 
-
-# He elegido centralizar los estados en `App` porque facilita la coordinación entre los filtros y la lista de equipamiento.
-
-# 
-
-# El inconveniente es que el componente principal necesita pasar varias propiedades a `Filtros`, lo que aumenta la cantidad de código y podría complicar su mantenimiento si se añadieran muchos más controles.
-
-# 
-
-# \### 2. Reutilización de las funciones de logic.js
-
-# 
-
-# Otra decisión ha sido mantener las funciones de clasificación y filtrado de la Misión 2 en un módulo independiente.
-
-# 
-
-# Estas funciones permiten clasificar el equipamiento a partir de su nombre y filtrar las armas según los criterios seleccionados.
-
-# 
-
-# La alternativa habría sido trasladar toda esta lógica directamente al componente `App.jsx`.
-
-# 
-
-# Sin embargo, he decidido mantenerla separada porque las funciones no dependen de React y pueden reutilizarse sin modificaciones importantes.
-
-# 
-
-# Esto permite que `App.jsx` se concentre en gestionar los estados y mostrar los componentes, mientras que `logic.js` se encarga del procesamiento de los datos.
-
-# 
-
-# Como inconveniente, la clasificación basada en palabras clave puede producir resultados incorrectos cuando el nombre de un objeto no contiene ninguno de los términos previstos.
-
-# 
-
-# \### 3. Uso de details en lugar de useState para los desplegables
-
-# 
-
-# Inicialmente se planteó controlar la visualización de los detalles de cada arma mediante `useState`, modificando un booleano al pulsar un botón.
-
-# 
-
-# Posteriormente decidí utilizar los elementos HTML `<details>` y `<summary>`, que permiten implementar un desplegable sin necesidad de gestionar su apertura mediante un estado de React.
-
-# 
-
-# Esta solución simplifica el componente `ArmaCard.jsx`, reduce la cantidad de código y aprovecha una funcionalidad nativa del navegador.
-
-# 
-
-# La alternativa con `useState` habría permitido controlar el desplegable desde React y desarrollar comportamientos más personalizados.
-
-# 
-
-# He elegido utilizar `<details>` porque, para las necesidades actuales de la aplicación, resulta suficiente y evita introducir estados innecesarios.
-
-# 
-
-# El principal inconveniente es que ofrece menos control directo desde React sobre el estado de apertura, aunque este control no es necesario para el funcionamiento actual del proyecto.
+El principal inconveniente de esta decisión es que algunos objetos pueden clasificarse incorrectamente cuando sus nombres no contienen las palabras previstas o cuando una palabra no representa adecuadamente el tipo de equipamiento.
 

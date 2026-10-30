@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function useLocalStorage(clave, valorInicial) {
 
@@ -15,21 +15,13 @@ export function useLocalStorage(clave, valorInicial) {
         }
     });
 
-    function actualizarValor(nuevoValor) {
-        setValor(valorAnterior => {
-            const resultado = typeof nuevoValor === "function"
-                ? nuevoValor(valorAnterior)
-                : nuevoValor;
+    useEffect(() => {
+        try {
+            localStorage.setItem(clave, JSON.stringify(valor));
+        } catch (error) {
+            console.error("Error guardando en localStorage:", error);
+        }
+    }, [clave, valor]);
 
-            try {
-                localStorage.setItem(clave, JSON.stringify(resultado));
-            } catch (error) {
-                console.error("Error guardando favoritos:", error);
-            }
-
-            return resultado;
-        });
-    }
-
-    return [valor, actualizarValor];
+    return [valor, setValor];
 }

@@ -52,19 +52,19 @@ function App() {
             try {
                 const datos = await obtenerArmas();
 
-                
-                setArmas(datos);
-                
+                if (activo) {
+                    setArmas(datos);
+                }
 
             } catch (err) {
-                
-                setError(err.message);
-                
+                if (activo) {
+                    setError(err.message);
+                }
 
             } finally {
-                
-                setCargando(false);
-                
+                if (activo) {
+                    setCargando(false);
+                }
             }
         }
 
@@ -148,7 +148,9 @@ function App() {
                     <button
                         type="button"
                         className="filtro-favoritos"
-                        onClick={() => setSoloFavoritos(!soloFavoritos)}
+                        onClick={() =>
+                            setSoloFavoritos(anterior => !anterior)
+                        }
                     >
                         {soloFavoritos
                             ? "Mostrar todas"

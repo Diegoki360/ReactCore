@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { obtenerTipo } from "../logic.js";
 
 function ArmaCard({ arma, esFavorito, alternarFavorito }) {
-    const [mostrarDetalles, setMostrarDetalles] = useState(false);
     return (
         <article className="arma-card">
             <img src={arma.image} alt={arma.name} />
